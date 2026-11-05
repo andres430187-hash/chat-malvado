@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Malvado</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>MALVADO</h1>
+  <span class="sub">Sin filtros. Sin mentiras.</span>
+  <button id="cfgBtn">Ajustes</button>
+</header>
+
+<main id="chat"></main>
+
+<form id="form">
+  <textarea id="input" placeholder="Pregunta (Enter envia)..." rows="1"></textarea>
+  <button type="submit" id="send">Enviar</button>
+</form>
+
+<div id="cfgModal" class="modal hidden">
+  <div class="modal-box">
+    <h2>Configuracion</h2>
+
+    <label>Proveedor</label>
+    <select id="provider">
+      <option value="groq">Groq (rapido, gratis)</option>
+      <option value="openrouter">OpenRouter (uncensored, gratis)</option>
+    </select>
+
+    <label id="keyLabel">API Key</label>
+    <input id="apiKey" type="password" placeholder="gsk_...">
+
+    <label>Modelo</label>
+    <select id="model">
+      <option value="llama-3.3-70b-versatile">Llama 3.3 70B (Groq)</option>
+      <option value="llama-3.1-8b-instant">Llama 3.1 8B (rapido)</option>
+      <option value="cognitivecomputations/dolphin-mixtral-8x7b:free">Dolphin Mixtral (uncensored)</option>
+      <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 (OR free)</option>
+    </select>
+
+    <div class="btns">
+      <button type="button" id="saveCfg">Guardar</button>
+      <button type="button" id="closeCfg">Cerrar</button>
+    </div>
+    <p class="hint">La key se guarda solo en tu navegador.</p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
