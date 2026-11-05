@@ -8,7 +8,8 @@ var modelSelect = document.getElementById('model');
 var providerSelect = document.getElementById('provider');
 var keyLabel = document.getElementById('keyLabel');
 
-var history = [];
+// ⬅️ CAMBIADO: Antes era "history". Ahora es "chatHistory" para evitar errores.
+var chatHistory = [];
 var busy = false;
 
 apiKeyInput.value = localStorage.getItem('malvado_key') || '';
@@ -17,10 +18,10 @@ providerSelect.value = localStorage.getItem('malvado_provider') || 'groq';
 
 function syncKeyHint() {
   if (providerSelect.value === 'openrouter') {
-    keyLabel.textContent = 'API Key de OpenRouter (opcional, el server ya tiene una)';
+    keyLabel.textContent = 'API Key de OpenRouter (opcional)';
     apiKeyInput.placeholder = 'sk-or-...';
   } else {
-    keyLabel.textContent = 'API Key de Groq (opcional, el server ya tiene una)';
+    keyLabel.textContent = 'API Key de Groq (opcional)';
     apiKeyInput.placeholder = 'gsk_...';
   }
 }
@@ -59,11 +60,11 @@ form.onsubmit = async function (e) {
   var text = input.value.trim();
   if (!text) return;
 
-  // La key es OPCIONAL: si no hay, el servidor usa la de Render
+  // ⬅️ CAMBIADO: La key es opcional. Si está vacía, el servidor usará la de Render.
   var key = localStorage.getItem('malvado_key') || '';
 
   addMsg('user', text);
-  history.push({ role: 'user', content: text });
+  chatHistory.push({ role: 'user', content: text }); // ⬅️ CAMBIADO
   input.value = '';
   sendBtn.disabled = true;
   busy = true;
@@ -79,7 +80,7 @@ form.onsubmit = async function (e) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        messages: history,
+        messages: chatHistory, // ⬅️ CAMBIADO
         apiKey: key || undefined,
         model: localStorage.getItem('malvado_model') || undefined,
         provider: localStorage.getItem('malvado_provider') || 'groq'
@@ -88,12 +89,14 @@ form.onsubmit = async function (e) {
     var data = await r.json();
     typing.remove();
     if (!r.ok || data.error) throw new Error(data.error || 'Error');
+    
     addMsg('bot', data.reply);
-    history.push({ role: 'assistant', content: data.reply });
+    chatHistory.push({ role: 'assistant', content: data.reply }); // ⬅️ CAMBIADO
+    
   } catch (err) {
     typing.remove();
     addMsg('err', 'Error: ' + err.message);
-    history.pop();
+    chatHistory.pop(); // ⬅️ CAMBIADO
   } finally {
     sendBtn.disabled = false;
     busy = false;
