@@ -17,10 +17,10 @@ providerSelect.value = localStorage.getItem('malvado_provider') || 'groq';
 
 function syncKeyHint() {
   if (providerSelect.value === 'openrouter') {
-    keyLabel.textContent = 'API Key de OpenRouter (openrouter.ai/keys)';
+    keyLabel.textContent = 'API Key de OpenRouter (opcional, el server ya tiene una)';
     apiKeyInput.placeholder = 'sk-or-...';
   } else {
-    keyLabel.textContent = 'API Key de Groq (console.groq.com/keys)';
+    keyLabel.textContent = 'API Key de Groq (opcional, el server ya tiene una)';
     apiKeyInput.placeholder = 'gsk_...';
   }
 }
@@ -59,8 +59,8 @@ form.onsubmit = async function (e) {
   var text = input.value.trim();
   if (!text) return;
 
-  var key = localStorage.getItem('malvado_key');
-  if (!key) { cfgModal.classList.remove('hidden'); return; }
+  // La key es OPCIONAL: si no hay, el servidor usa la de Render
+  var key = localStorage.getItem('malvado_key') || '';
 
   addMsg('user', text);
   history.push({ role: 'user', content: text });
@@ -80,8 +80,8 @@ form.onsubmit = async function (e) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         messages: history,
-        apiKey: key,
-        model: localStorage.getItem('malvado_model'),
+        apiKey: key || undefined,
+        model: localStorage.getItem('malvado_model') || undefined,
         provider: localStorage.getItem('malvado_provider') || 'groq'
       })
     });
@@ -101,4 +101,4 @@ form.onsubmit = async function (e) {
   }
 };
 
-addMsg('bot', 'Configura tu API key con el boton Ajustes (gratis en console.groq.com/keys).');
+addMsg('bot', 'Listo. Escribe tu mensaje. (La API key ya está configurada en el servidor.)');
